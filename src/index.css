@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-brand: "Great Vibes", cursive;
+  
+  /* Vibrant Light Palette */
+  --color-bg-pure: #ffffff;
+  --color-bg-soft: #f8fafc;
+  --color-accent: #0284c7; /* Sky Blue */
+  --color-accent-magenta: #db2777; /* Rose/Magenta */
+  --color-accent-amber: #f59e0b; /* Golden Amber */
+  --color-accent-emerald: #10b981; /* Lush Green */
+  --color-accent-soft: rgba(2, 132, 199, 0.05);
+  --color-text-main: #0f172a;
+  --color-text-dim: #64748b;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-bg-pure text-text-main antialiased min-h-screen overflow-x-hidden selection:bg-accent/20;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-extrabold tracking-tight;
+  }
+}
+
+/* Premium interactions - Refinement for Light Mode */
+.btn-premium {
+  @apply relative px-8 py-4 rounded-2xl font-bold transition-all duration-300 overflow-hidden border-2 border-slate-200 hover:border-accent hover:bg-slate-50 shadow-sm active:scale-95;
+}
+
+.card-premium {
+  @apply bg-white border border-slate-100 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:translate-y-[-8px];
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-magenta;
+}
+
+.micro-label {
+  @apply text-[11px] font-black uppercase tracking-[0.25em] text-accent;
+}
+
+/* Graphic Elements */
+.bg-colorful-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.15) 0, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(219, 39, 119, 0.15) 0, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.15) 0, transparent 50%);
+}
+
+.glass-nav {
+  @apply bg-white/80 backdrop-blur-xl border-b border-slate-100;
+}
+
+/* Animations placeholder if needed */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
