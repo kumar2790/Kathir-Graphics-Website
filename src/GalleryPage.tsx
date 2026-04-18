@@ -5,16 +5,45 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.png';
 
 export default function GalleryPage() {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<{src: string, category: string}[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
+  const [activeCategory, setActiveCategory] = useState('All');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Vite mechanism to import all images from a folder
-    const imageModules = import.meta.glob('./assets/gallery/*.{png,jpg,jpeg,svg,webp}', { eager: true });
-    const loadedImages = Object.values(imageModules).map((mod: any) => mod.default || mod);
+    // Vite mechanism to import all images from gallery and subfolders
+    const imageModules = import.meta.glob('./assets/gallery/**/*.{png,jpg,jpeg,svg,webp}', { eager: true });
+    
+    const loadedImages = Object.entries(imageModules).map(([path, mod]: [string, any]) => {
+      // Path looks like ./assets/gallery/category/image.jpg or ./assets/gallery/image.jpg
+      const parts = path.split('/');
+      // parts will be something like ["", "assets", "gallery", "folderName", "image.jpg"]
+      // after cleaning up the path
+      const cleanedParts = path.replace('./', '').split('/');
+      let category = 'General';
+      
+      // If there's a subfolder, cleanedParts[2] would be the category
+      // index 0: assets, index 1: gallery, index 2: subfolder or filename
+      if (cleanedParts.length > 3) {
+        category = cleanedParts[2];
+      }
+      
+      return {
+        src: mod.default || mod,
+        category: category
+      };
+    });
+
     setImages(loadedImages);
+    
+    const uniqueCategories = ['All', ...new Set(loadedImages.map(img => img.category))];
+    setCategories(uniqueCategories);
   }, []);
+
+  const filteredImages = activeCategory === 'All' 
+    ? images 
+    : images.filter(img => img.category === activeCategory);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -38,51 +67,77 @@ export default function GalleryPage() {
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <header className="mb-20">
+          <header className="mb-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
             >
               <h1 className="text-6xl md:text-8xl font-black text-text-main mb-6">OUR GALLERIA</h1>
               <p className="text-xl text-text-dim max-w-2xl font-medium">
-                A curated showcase of our most creative design works. Click any image to view it full screen.
+                Explore our portfolio. Categorized by work type for your convenience.
               </p>
             </motion.div>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {images.map((src, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: -100, x: i % 2 === 0 ? -30 : 30, rotate: i % 2 === 0 ? -10 : 10, scale: 0.7 }}
-                whileInView={{ opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ 
-                   type: "spring",
-                  damping: 15,
-                  stiffness: 80,
-                  delay: (i % 3) * 0.1,
-                }}
-                className="group relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-slate-50 hover:border-accent transition-colors duration-500 cursor-zoom-in"
-                onClick={() => setSelectedImage(src)}
+          {/* E-commerce Style Filter Bar */}
+          <div className="flex flex-wrap gap-3 mb-16 pb-4 border-b border-slate-100">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-8 py-3 rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all ${
+                  activeCategory === cat 
+                    ? 'bg-text-main text-white shadow-xl shadow-slate-200' 
+                    : 'bg-slate-50 text-text-dim hover:bg-slate-100'
+                }`}
               >
-                <img 
-                  src={src} 
-                  alt={`Gallery Item ${i}`} 
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-8">
-                  <span className="text-white text-[10px] font-black uppercase tracking-widest bg-black/20 backdrop-blur-md px-4 py-2 rounded-full">Click to Expand</span>
-                </div>
-              </motion.div>
+                {cat}
+              </button>
             ))}
           </div>
 
-          {images.length === 0 && (
-            <div className="py-20 text-center">
-              <p className="text-text-dim italic">No images found. Please add images to the 'src/assets/gallery' folder.</p>
+          <motion.div 
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredImages.map((img, i) => (
+                <motion.div
+                  key={img.src}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 100,
+                  }}
+                  className="group relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-slate-50 hover:border-accent transition-colors duration-500 cursor-zoom-in"
+                  onClick={() => setSelectedImage(img.src)}
+                >
+                  <img 
+                    src={img.src} 
+                    alt={`Gallery Item ${i}`} 
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-8 left-8">
+                    <span className="px-4 py-2 bg-white/80 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-text-main shadow-sm">
+                      {img.category}
+                    </span>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-8">
+                    <span className="text-white text-[10px] font-black uppercase tracking-widest bg-black/20 backdrop-blur-md px-4 py-2 rounded-full">Click to Expand</span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredImages.length === 0 && (
+            <div className="py-40 text-center">
+              <p className="text-text-dim italic text-2xl font-medium">No items found in this category.</p>
             </div>
           )}
         </div>
