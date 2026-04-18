@@ -140,19 +140,31 @@ function LandingPage() {
                       key={item}
                       to="/gallery"
                       className="text-[12px] font-black uppercase tracking-widest text-left py-2 font-sans"
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       {item}
                     </Link>
                   ) : (
                     <button 
                       key={item} 
-                      onClick={() => scrollToSection(item.toLowerCase())}
+                      onClick={() => {
+                        scrollToSection(item.toLowerCase());
+                        setIsMenuOpen(false);
+                      }}
                       className="text-[12px] font-black uppercase tracking-widest text-left py-2"
                     >
                       {item}
                     </button>
                   )
                 ))}
+                <a 
+                  href="https://app.kathirgraphics.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="mt-4 px-8 py-3 bg-text-main text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-accent transition-all shadow-lg flex items-center justify-center gap-2"
+                >
+                  Download App <Download size={16} />
+                </a>
               </div>
             </motion.div>
           )}
@@ -433,12 +445,8 @@ function LandingPage() {
             <span className="text-2xl text-text-main font-brand">Kathir Graphics</span>
           </div>
           <p className="text-[12px] font-bold uppercase tracking-widest text-slate-400">
-            © {new Date().getFullYear()} Kathir Graphics. Established for Brilliance.
+            © {new Date().getFullYear()} Kathir Graphics.
           </p>
-          <div className="flex gap-10">
-            <button onClick={() => scrollToSection('home')} className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent transition-colors">Privacy</button>
-            <button onClick={() => scrollToSection('home')} className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent transition-colors">Terms</button>
-          </div>
         </div>
       </footer>
     </div>
