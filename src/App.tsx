@@ -70,8 +70,11 @@ function LandingPage() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
+      // Small delay to allow menu animation to start closing
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
   };
 
@@ -139,7 +142,7 @@ function LandingPage() {
                     <Link 
                       key={item}
                       to="/gallery"
-                      className="text-[12px] font-black uppercase tracking-widest text-left py-2 font-sans"
+                      className="text-[14px] font-black uppercase tracking-widest text-left py-4 px-2 font-sans border-b border-slate-50 w-full"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item}
@@ -149,9 +152,8 @@ function LandingPage() {
                       key={item} 
                       onClick={() => {
                         scrollToSection(item.toLowerCase());
-                        setIsMenuOpen(false);
                       }}
-                      className="text-[12px] font-black uppercase tracking-widest text-left py-2"
+                      className="text-[14px] font-black uppercase tracking-widest text-left py-4 px-2 border-b border-slate-50 w-full"
                     >
                       {item}
                     </button>
@@ -161,9 +163,9 @@ function LandingPage() {
                   href="https://app.kathirgraphics.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="mt-4 px-8 py-3 bg-text-main text-white rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-accent transition-all shadow-lg flex items-center justify-center gap-2"
+                  className="mt-6 px-8 py-4 bg-text-main text-white rounded-2xl text-[14px] font-black uppercase tracking-widest hover:bg-accent-magenta transition-all shadow-xl flex items-center justify-center gap-2 w-full"
                 >
-                  Download App <Download size={16} />
+                  Download App <Download size={20} />
                 </a>
               </div>
             </motion.div>
@@ -407,7 +409,7 @@ function LandingPage() {
             <div className="p-12 rounded-[3rem] bg-slate-50 border border-slate-100 hover:scale-105 transition-transform">
               <div className="w-16 h-16 bg-accent-magenta/10 rounded-2xl flex items-center justify-center mx-auto mb-8"><Mail className="text-accent-magenta" size={32} /></div>
               <h4 className="text-sm font-black uppercase tracking-widest mb-4">Email</h4>
-              <p className="text-xl font-bold text-text-main break-all lowercase">kkumardesigner@gmail.com</p>
+              <p className="text-xl font-bold text-text-main break-all lowercase">admin@kathirgraphics.com</p>
             </div>
             <div className="p-12 rounded-[3rem] bg-slate-50 border border-slate-100 hover:scale-105 transition-transform">
               <div className="w-16 h-16 bg-accent-amber/10 rounded-2xl flex items-center justify-center mx-auto mb-8"><MapPin className="text-accent-amber" size={32} /></div>
